@@ -1,22 +1,5 @@
 
 ./maze
-bad\file\path
-maze\room-1\room-0
-maze\room-2\room-0
-maze\room-0\room-0
-maze\room-1\room-2
-maze\room-0\room-1
-Treasure Found! ✔
-./maze
-./maze
-maze\room-1\room-0
-maze\room-2\room-0
-maze\room-0\room-0
-maze\room-1\room-2
-maze\room-0\room-1
-Treasure Found! ✔
-./maze
-./maze
 maze\room-1\room-0
 maze\room-2\room-0
 maze\room-0\room-0
