@@ -1,0 +1,27 @@
+{
+  "name": "find-the-treasure",
+  "version": "1.0.0",
+  "description": "find the treasure group project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/17Amir17/find-the-treasure.git"
+  },
+  "author": "Amir Angel and Ron Cohen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/17Amir17/find-the-treasure/issues"
+  },
+  "homepage": "https://github.com/17Amir17/find-the-treasure#readme",
+  "dependencies": {
+    "eslint": "^8.0.1"
+  },
+  "devDependencies": {
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.4.1"
+  }
+}
