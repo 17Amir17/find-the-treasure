@@ -1,1 +1,1 @@
-(()=>{var r={351:()=>{}},o={};function e(t){var l=o[t];if(void 0!==l)return l.exports;var n=o[t]={exports:{}};return r[t](n,n.exports,e),n.exports}e(351),console.log("Hello world")})();
+(()=>{var e={147:e=>{"use strict";e.exports=require("fs")}},r={};function o(t){var s=r[t];if(void 0!==s)return s.exports;var n=r[t]={exports:{}};return e[t](n,n.exports,o),n.exports}(()=>{const e=o(147);console.log("Hello world"),console.log(function(r){try{return JSON.parse(e.readFileSync("./maze-example/chest-1.json","utf8"))}catch(e){return console.log(e),!1}}())})()})();
