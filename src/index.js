@@ -63,11 +63,91 @@ function hasTreasure(chest) {
 
 function getCluePath(clue) {
   try {
-    console.log(clue);
     return path.normalize(clue);
   } catch (err) {
     return false;
   }
 }
 
-findTreasureSync(mazePath);
+//findTreasureSync(mazePath);
+
+// Hard: async functions, use node-style callbacks for result and error handeling
+function findTreasure(roomPath, cb) {
+  getChestsInDirAsync(roomPath, (err, chests) => {
+    if (err) cb(err);
+    else {
+      console.log(chests);
+      loop(roomPath, chests);
+    }
+  });
+}
+
+function openChest(chestPath, cb) {
+  fs.readFile(chestPath, 'utf8', (err, data) => {
+    if (err) {
+      cb(err, null);
+      return;
+    }
+    try {
+      cb(null, JSON.parse(data));
+    } catch (error) {
+      cb(error, null);
+    }
+  });
+}
+
+function drawMapASync(currentRoomPath, cb) {
+  fs.writeFile('./maze.txt', currentRoomPath + '\n', { flag: 'a+' }, (err) => {
+    if (err) {
+      cb(err, null);
+      return;
+    }
+    cb(null, true);
+  });
+}
+
+function getChestsInDirAsync(dir, cb) {
+  fs.readdir(dir, (err, files) => {
+    if (err) cb(err, null);
+    else {
+      const chests = [];
+      files.forEach((file) => {
+        if (file.includes('.json')) {
+          chests.push(file);
+        }
+      });
+      cb(null, chests);
+    }
+  });
+}
+
+const loop = (roomPath, chests) => {
+  console.log(roomPath, chests);
+  openChest(path.resolve(roomPath, chests.pop(0)), (error, chest) => {
+    console.log(error, chest);
+    if (error) {
+      loop(roomPath, chests);
+    } else {
+      drawMapASync(roomPath, (err) => {
+        if (err) console.log('Couldnt write');
+      });
+      if (hasTreasure(chest)) {
+        console.log('Treasure Found');
+        drawMapASync('Treasure Found! ✔', () => {});
+      } else {
+        console.log(chest);
+        const cluePath = getCluePath(chest.clue);
+        if (cluePath) {
+          console.log('Going deeper');
+          findTreasure(cluePath, (err) => {
+            if (err) loop(roomPath, chests);
+          });
+        } else {
+          loop(roomPath, chests);
+        }
+      }
+    }
+  });
+};
+
+findTreasure(mazePath, () => {});
