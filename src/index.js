@@ -76,7 +76,6 @@ function findTreasure(roomPath, cb) {
   getChestsInDirAsync(roomPath, (err, chests) => {
     if (err) cb(err);
     else {
-      console.log(chests);
       loop(roomPath, chests);
     }
   });
@@ -122,9 +121,7 @@ function getChestsInDirAsync(dir, cb) {
 }
 
 const loop = (roomPath, chests) => {
-  console.log(roomPath, chests);
   openChest(path.resolve(roomPath, chests.pop(0)), (error, chest) => {
-    console.log(error, chest);
     if (error) {
       loop(roomPath, chests);
     } else {
@@ -135,10 +132,8 @@ const loop = (roomPath, chests) => {
         console.log('Treasure Found');
         drawMapASync('Treasure Found! ✔', () => {});
       } else {
-        console.log(chest);
         const cluePath = getCluePath(chest.clue);
         if (cluePath) {
-          console.log('Going deeper');
           findTreasure(cluePath, (err) => {
             if (err) loop(roomPath, chests);
           });
@@ -150,4 +145,62 @@ const loop = (roomPath, chests) => {
   });
 };
 
-findTreasure(mazePath, () => {});
+// findTreasure(mazePath);
+
+// Bonus: use **fs.promises**
+async function promiseTreasure(roomPath) {
+  try {
+    const chests = await promiseReaddir(roomPath);
+    await promiseDrawMap(roomPath);
+    chests.forEach((chest) => {
+      promiseOpenChest(path.resolve(roomPath, chest)).then(
+        (content) => {
+          if (hasTreasure(content)) {
+            console.log('Treasure found!');
+            promiseDrawMap('Threasure Found ✔');
+          } else {
+            const cluePath = getCluePath(content.clue);
+            promiseTreasure(cluePath);
+          }
+        },
+        (err) => {}
+      );
+    });
+  } catch (error) {}
+}
+async function promiseOpenChest(roomPath) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(roomPath, 'utf8', (err, chest) => {
+      if (err) {
+        reject(err);
+      }
+      try {
+        chest = JSON.parse(chest);
+        resolve(chest);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  });
+}
+async function promiseDrawMap(currentRoomPath) {
+  fs.writeFile('./maze.txt', currentRoomPath + '\n', { flag: 'a+' }, (err) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+  });
+}
+async function promiseReaddir(dir) {
+  return new Promise((resolve, reject) => {
+    fs.readdir(dir, (err, files) => {
+      if (err) reject(err);
+      else {
+        files = files.filter((file) => file.includes('.json'));
+        resolve(files);
+      }
+    });
+  });
+}
+
+promiseTreasure(mazePath);
